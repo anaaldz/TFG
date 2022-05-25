@@ -1,0 +1,32 @@
+##Primero se listan los BAMs
+
+library(CrispRVariants)
+library(ggplot2)
+library("gdata")
+md_fname <- system.file(package="CrispRVariants", "extdata/metadata/BAM.xls")
+md <- gdata::read.xls(md_fname, 1)
+md
+bam_dir <- system.file(package="CrispRVariants", "extdata/bam")
+bam_fnames <- file.path(bam_dir, md$bamfile)
+all( file.exists(bam_fnames) )
+
+##Target
+
+library(GenomicRanges)
+gd <- GenomicRanges::GRanges(seqnames = "chr13", ranges = IRanges (start = 34194561, end = 34194587), strand = "+")
+gdl <- GenomicRanges::resize(gd, width(gd) + 10, fix = "center")
+
+##Referencia
+
+alns <- GenomicAlignments::readGAlignments(bam_fnames[[1]],
+param = Rsamtools::ScanBamParam(tag = "MD", what = c("seq", "flag")),
+use.names = TRUE)
+rfa <- refFromAlns(alns, gdl)
+
+##Crisprset
+
+crispr_set <- readsToTarget(bam_fnames, target = gdl, reference = rfa, names = md$Short.name, target.loc = 31)
+vc <- variantCounts(crispr_set)
+print(class(vc))
+
+plotVariants(crispr_set)
