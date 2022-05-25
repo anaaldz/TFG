@@ -1,0 +1,14 @@
+## Run script
+
+date "+Hasi: %Y-%m-%d %H:%M:%S"
+
+module load FastQC/0.11.8-Java-1.8 
+
+folder_output002=/home/itamayou/AnaAldaz/002_fastc
+grac=/datos/intercambio/ngs/gracamra/MiniSeq.RUN2.20210427/demux_fastq
+
+for file in $grac/*.gz
+do
+    fastqc -o ${folder_output002} -t 8 --noextract $file
+
+done
