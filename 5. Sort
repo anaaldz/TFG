@@ -1,0 +1,8 @@
+## Run script
+
+date "+Hasi: %Y-%m-%d %H:%M:%S"
+
+module load SAMtools/1.9-foss-2018b
+
+samtools sort /datos/intercambio/itamayou/AnaAldaz/bam/J2R3-20-19_S13_R1.fastq.gz.bam > /datos/intercambio/itamayou/AnaAldaz/sorted/J2R3-20-19_S13_R1.fastq.gz.bam
+samtools index /datos/intercambio/itamayou/AnaAldaz/sorted/J2R3-20-19_S13_R1.fastq.gz.bam
