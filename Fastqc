@@ -1,0 +1,14 @@
+## Run script
+
+date "+Hasi: %Y-%m-%d %H:%M:%S"
+
+module load FastQC/0.11.8-Java-1.8 
+
+folder_output004=/datos/intercambio/itamayou/AnaAldaz/004_fastc
+ana=/datos/intercambio/itamayou/AnaAldaz/003_trimming
+
+for file in $ana/*.gz
+do
+    fastqc -o ${folder_output004} -t 8 --noextract $file
+
+done
