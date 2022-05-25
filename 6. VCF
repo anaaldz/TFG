@@ -1,0 +1,9 @@
+## Run script
+
+date "+Hasi: %Y-%m-%d %H:%M:%S"
+
+gatk --java-options "-Xmx4g" HaplotypeCaller  \
+   -R /datos/intercambio/itamayou/AnaAldaz/referencia/GRCm39.genome.fa.gz \
+   -I /datos/intercambio/itamayou/AnaAldaz/bam/J1R3-20-19_S7.sort.bam \
+   -O /datos/intercambio/itamayou/AnaAldaz/vcf/J1R3-20-19_S7.g.vcf.gz \
+   -ERC GVCF
