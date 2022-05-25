@@ -1,0 +1,15 @@
+## Run script
+
+date "+Hasi: %Y-%m-%d %H:%M:%S"
+
+module load Trimmomatic/0.38-Java-1.8 
+
+folder_003=/datos/intercambio/itamayou/AnaAldaz/003_trimming
+grac=/datos/intercambio/ngs/gracamra/MiniSeq.RUN2.20210427/demux_fastq
+
+java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.38.jar PE -phred33 \
+    $grac/J4R1-20-9_S3_R1_001.fastq.gz $grac/J4R1-20-9_S3_R2_001.fastq.gz \
+    $folder_003/J4R1-20-9_S3_R1.fastq.gz $folder_003/J4R1-20-9_S3_R1_un.fastq.gz \
+    $folder_003/J4R1-20-9_S3_R2.fastq.gz $folder_003/J4R1-20-9_S3_R_un.fastq.gz \
+    ILLUMINACLIP:/datos/intercambio/itamayou/AnaAldaz/adapters/TruSeq3-PE.fa:2:30:10:5:true \
+    MINLEN:50
