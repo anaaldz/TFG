@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#SBATCH --time=10:00:00
+#SBATCH -o /home/aaldazsagre/jobsSlurm/outErr/%%x_%%A_%%a.out
+#SBATCH -e /home/aaldazsagre/jobsSlurm/outErr/%%x_%%A_%%a.err
+#SBATCH --job-name=mapping
+#SBATCH -p short
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=10G
+#SBATCH --array=1-1
+
+
+module load Bowtie2/2.3.4.2-foss-2018b
+module load SAMtools/1.12-GCC-10.2.0
+module load deepTools/3.2.0-foss-2018b-Python-2.7.15
+
+# TO CHANGE
+basename2=/datos/intercambio/itamayou/AnaAldaz/bam/J4R2-20-19_S10_
+GenomeIndex="/datos/intercambio/itamayou/AnaAldaz/referencia/GRCm39.primary_assembly.genome"
+trimedRead1="/datos/intercambio/itamayou/AnaAldaz/003_trimming/J4R2-20-19_S10_R1.fastq.gz"
+trimedRead2="/datos/intercambio/itamayou/AnaAldaz/003_trimming/J4R2-20-19_S10_R2.fastq.gz"
+
+############### CODE
+
+samFile="${basename2}.sam"
+bamFile="${basename2}.bam"
+bamSort="${basename2}.sort.bam"
+bigWigOut="${basename2}.sort.norm.bw"
+
+
+# mapping to the genome (output is sam)
+echo "mapping"
+bowtie2 -p $SLURM_CPUS_PER_TASK -X 1000 --no-discordant --no-mixed \
+--very-sensitive -x $GenomeIndex -1 ${trimedRead1} -2 ${trimedRead2} -S ${samFile}
+
+# convert sam to bam
+echo "convert to bam"
+samtools view -o ${bamFile} -bhS -@ $SLURM_CPUS_PER_TASK \
+${samFile} 
+
+# sort bam
+echo "sort"
+samtools sort -o ${bamSort} ${bamFile} 
+
+# generate index of bam
+echo "index"
+samtools index ${bamSort} -@ $SLURM_CPUS_PER_TASK
+
+# create bigwig to check in IGV
+echo "Bigwig"
+bamCoverage --binSize 5 --normalizeUsing CPM --exactScaling \
+-b ${bamSort} -of bigwig \
+-o ${bigWigOut} --numberOfProcessors $SLURM_CPUS_PER_TASK
+
+rm ${samFile}
+rm ${bamFile}
